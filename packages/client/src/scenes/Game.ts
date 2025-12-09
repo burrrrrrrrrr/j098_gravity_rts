@@ -61,6 +61,12 @@ export class Game extends Scene {
         color: "#000000",
       })
       .setOrigin(0.5);
+
+    this.add.sprite(1000,1000,"ball");
+    let ball=this.physics.add.sprite(this.sys.game.config.width/2,0,"ball");
+    ball.setGravity(100);
+    ball.setMass(10); 
+
   }
 
   async connect() {
