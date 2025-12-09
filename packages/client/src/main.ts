@@ -17,7 +17,10 @@ import { Background } from "./scenes/Background";
     roundPixels: false,
     pixelArt: false,
     physics:{
-      default:'arcade',
+      default:'matter',
+      matter: {
+        gravity: {x: 0, y: 0},
+      },
       arcade:{debug:true}
     },
     scene: [Boot, Preloader, MainMenu, Game, Background],
