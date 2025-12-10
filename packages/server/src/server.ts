@@ -1,11 +1,10 @@
 import { MonitorOptions, monitor } from "@colyseus/monitor";
-import { Server } from "colyseus";
+import { LobbyRoom, Server } from "colyseus";
 import dotenv from "dotenv";
 import express, { Application, Request, Response } from "express";
 import { createServer } from "http";
 import { WebSocketTransport } from "@colyseus/ws-transport";
 import path from "path";
-
 import { GameRoom } from "./rooms/GameRoom";
 
 dotenv.config({ path: "../../.env" });
@@ -26,6 +25,10 @@ server
   // filterBy allows us to call joinOrCreate and then hold one game per channel
   // https://discuss.colyseus.io/topic/345/is-it-possible-to-run-joinorcreatebyid/3
   .filterBy(["channelId"]);
+server.define("lobby", LobbyRoom);
+server
+  .define("my_room", GameRoom)
+  .enableRealtimeListing();
 
 app.use(express.json());
 app.use(router);

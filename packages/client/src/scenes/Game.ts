@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { Room, Client, getStateCallbacks } from "colyseus.js";
+import { Room, RoomAvailable, Client, getStateCallbacks } from "colyseus.js";
 
 export class Game extends Scene {
   room: Room;
@@ -85,6 +85,31 @@ export class Game extends Scene {
       location.host === "localhost:3000" ? `ws://localhost:3001` : `wss://${location.host}/.proxy/api/colyseus`;
 
     const client = new Client(`${url}`);
+    let allRooms: RoomAvailable[] = [];
+    const lobby = await client.joinOrCreate("lobby");
+    lobby.onMessage("rooms", (rooms) => {
+      allRooms = rooms;
+      console.log('allRooms 1')
+      console.log(allRooms)
+    });
+    
+    lobby.onMessage("+", ([roomId, room]) => {
+      const roomIndex = allRooms.findIndex((room) => room.roomId === roomId);
+      if (roomIndex !== -1) {
+        allRooms[roomIndex] = room;
+    
+      } else {
+        allRooms.push(room);
+      }
+      console.log('roomIndex')
+      console.log(roomIndex)
+    });
+    
+    lobby.onMessage("-", (roomId) => {
+      allRooms = allRooms.filter((room) => room.roomId !== roomId);
+      console.log('allRooms 2')
+      console.log(allRooms)
+    });
 
     try {
       this.room = await client.joinOrCreate("game", {
